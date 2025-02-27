@@ -1,10 +1,9 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 const taskschema = new Schema({
-    username: {
+    email: {
         type: String,
-        default: "het chawda",
-        required: false,
+        required: true,
     },
     task: {
         type: String,

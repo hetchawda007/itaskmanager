@@ -1,12 +1,16 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import dragcontext from '../Context/dragcontext'
 import context from '../Context/context'
 import { motion } from 'motion/react'
 import deletecontext from '../Context/deletecontext'
 import { updateTasks } from '@/Server/useractions'
 import { deleteTasks } from '@/Server/useractions'
+import { getSession } from "next-auth/react";
+import { Session } from "next-auth";
+
 interface TaskProps {
     item: {
+        email: string,
         task: string,
         status: string,
         id: number
@@ -18,8 +22,17 @@ const Task: React.FC<TaskProps> = ({ item }) => {
     const [visibility, setVisibility] = useState(false)
     const value = useContext(context)
     const dragcontexttask = useContext(dragcontext)
-    const D_start = () => {
-    }
+    const [session, setSession] = useState<Session | null>(null)
+
+    useEffect(() => {
+        const getsession = async () => {
+            const Session = await getSession();
+            setSession(Session)
+        }
+        getsession();
+    }, [])
+
+    const D_start = () => { }
 
     const D_end = async () => {
         if ((item.id !== dragcontexttask?.dragtask?.id || item.status !== dragcontexttask?.dragtask?.status) && dragcontexttask?.dragtask !== undefined && !deletetask?.deletetask) {
@@ -27,16 +40,20 @@ const Task: React.FC<TaskProps> = ({ item }) => {
                 task === item ? { ...task, status: dragcontexttask?.dragtask.status, id: dragcontexttask.dragtask.id } :
                     task.status === dragcontexttask?.dragtask.status && task.id >= dragcontexttask?.dragtask.id ? { ...task, id: task.id + 1 } : task
             );
-            { newTasks ? value?.setTasks(newTasks) : console.log('newTasks is undefined') }
-            await updateTasks({ id: dragcontexttask?.dragtask.id, status: dragcontexttask?.dragtask.status, item: item })
+            if (newTasks) {
+                value?.setTasks(newTasks);
+            } else {
+                console.log('newTasks is undefined');
+            }
+            await updateTasks({ id: dragcontexttask?.dragtask.id, status: dragcontexttask?.dragtask.status, item: item, email: `${session?.user?.email}` })
         }
         if (deletetask?.deletetask) {
-            const newtasks = value?.Tasks.filter((task) => task !== item)
-            newtasks?.map((task) => {
+            const newtasks = value?.Tasks.filter((task) => task !== item);
+            const updatedTasks = newtasks?.map((task) => 
                 task.status === item.status && task.id >= item.id ? { ...task, id: task.id + 1 } : task
-            })
-            if (newtasks) { value?.setTasks(newtasks) }
-            await deleteTasks({ id: item.id || 2, status: item.status || "Current" })
+            );
+            if (updatedTasks) { value?.setTasks(updatedTasks); }
+            await deleteTasks({ email: `${session?.user?.email}`, id: item.id || 2, status: item.status || "Current" });
             deletetask.setdeletetask?.(false);
         }
     };

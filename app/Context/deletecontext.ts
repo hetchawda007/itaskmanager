@@ -1,11 +1,5 @@
 import React from "react";
 
-interface Task {
-    task: string;
-    status: string;
-    id: number;
-}
-
 interface DeleteProps {
     deletetask: boolean;
     setdeletetask: React.Dispatch<React.SetStateAction<boolean>>;
