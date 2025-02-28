@@ -7,7 +7,7 @@ import { signIn } from 'next-auth/react'
 import { getSession } from 'next-auth/react'
 import { redirect } from 'next/navigation'
 
-const Page = () => {
+const page = () => {
 
     useEffect(() => {
         const func = async () => {
@@ -55,4 +55,4 @@ const Page = () => {
     )
 }
 
-export default Page
+export default page
