@@ -78,14 +78,9 @@ const Page = () => {
                             <Taskwrapper status="Inprogress" />
                             <Taskwrapper status="Completed" />
                             <IconContext.Provider value={{ color: "#6e6e6e", size: "2em" }}>
-                                {deleteelement === false && Array.isArray(Tasks) && Tasks.length > 0 ? <div onDragEnter={D_enter} className="w-[25%] h-72 border self-start bg-[#262626] border-neutral-600 flex justify-center items-center rounded-lg">
+                                {deleteelement === false && <div onDragEnter={D_enter} className="w-[25%] h-72 border self-start bg-[#262626] border-neutral-600 flex justify-center items-center rounded-lg">
                                     <FiTrash />
-                                </div>
-                                    :
-                                    <div className="self-start flex justify-center items-center rounded-lg">
-                                        <Skeleton width={300} height={300} />
-                                    </div>
-                                }
+                                </div>}
                             </IconContext.Provider>
                             <IconContext.Provider value={{ color: "red", size: "2em" }}>
                                 {deleteelement === true && <div onDragLeave={D_Leave} className="w-[25%] h-72 border self-start bg-red-950 border-red-600 flex justify-center items-center rounded-lg">

@@ -39,37 +39,59 @@ const Taskwrapper: React.FC<TaskProps> = ({ status }) => {
     return (
         <SkeletonTheme baseColor="#202020" highlightColor="#444">
             <div className="flex flex-col w-[25%] h-full items-center">
-                {Array.isArray(value?.Tasks) && value?.Tasks.length > 0 ? <div className="flex justify-between items-center w-full mb-5">
-                    <div className="text-yellow-200 text-lg font-semibold">{status}</div>
-                    <div className="text-neutral-400">
-                        {value?.Tasks.filter((item) => item.status === status).length}
-                    </div>
-                </div> :
-                    <Skeleton width={300} height={40} />
-                }
-                <div className='w-full'>
-                    {Array.isArray(value?.Tasks) && value?.Tasks.length > 0 ? (
-                        <motion.div layout>
-                            {value?.Tasks
-                                .filter((item) => item.status === status)
-                                .sort((a, b) => a.id - b.id)
-                                .map((item) => (
-                                    <Task key={item.id} item={item} />
-                                ))}
-                        </motion.div>
+
+                {Array.isArray(value?.Tasks) ? (
+                    value?.Tasks.length > 0 ? (
+                        <div className="flex justify-between items-center w-full mb-5">
+                            <div className="text-yellow-200 text-lg font-semibold">{status}</div>
+                            <div className="text-neutral-400">
+                                {value?.Tasks.filter((item) => item.status === status).length}
+                            </div>
+                        </div>
                     ) : (
-                        <div className='mt-2'>
-                        <Skeleton width={300} height={50} count={3} />
+                        <div className="flex justify-between items-center w-full mb-5">
+                            <div className="text-yellow-200 text-lg font-semibold">{status}</div>
+                            <div className="text-neutral-400">
+                                {value?.Tasks.filter((item) => item.status === status).length}
+                            </div>
+                        </div>
+                    )
+                ) : (
+                    // Show skeleton only while value?.Tasks is undefined (loading state)
+                    <div className="mt-2">
+                        <Skeleton width={300} height={40} />
+                    </div>
+                )}
+
+                <div className='w-full'>
+                    {Array.isArray(value?.Tasks) ? (
+                        value?.Tasks.length > 0 ? (
+                            <motion.div layout>
+                                {value?.Tasks
+                                    .filter((item) => item.status === status)
+                                    .sort((a, b) => a.id - b.id)
+                                    .map((item) => (
+                                        <Task key={item.id} item={item} />
+                                    ))}
+                            </motion.div>
+                        ) : (
+                            // Empty state message when no tasks exist
+                            <div className="mt-2 text-gray-400">No tasks available.</div>
+                        )
+                    ) : (
+                        // Show skeleton only while value?.Tasks is undefined (loading state)
+                        <div className="mt-2">
+                            <Skeleton width={300} height={50} count={3} />
                         </div>
                     )}
-                    {addtask === true && Array.isArray(value?.Tasks) && value?.Tasks.length > 0 ?
+                    {addtask === true &&
                         <>
                             <div className='w-full'>
                                 <button onClick={() => setAddtask(!addtask)} className="outline-none bg-opacity-0 text-neutral-400 text-sm w-fit self-start mt-2 ml-3 hover:text-neutral-200">Add card +</button>
                             </div>
                         </>
-                        : <Skeleton width={80} height={20} />
                     }
+
                     {addtask === false && <div className="w-full flex flex-col">
                         <textarea autoFocus={true} onChange={handlechange} value={task} name="current" id="current" placeholder="Add new task..." className="placeholder:text-blue-300 text-yellow-50 mt-1 font-semibold text-sm border-2 border-blue-600 placeholder:font-semibold placeholder:text-sm h-16 w-full pt-3 pl-3 bg-blue-950 rounded-lg focus:outline-none"></textarea>
                         <div className="flex items-center gap-5 self-end mt-3">
